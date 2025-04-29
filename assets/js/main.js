@@ -20,10 +20,21 @@ document.addEventListener('DOMContentLoaded', function() {
 function initCountdown() {
     const countdownElement = document.getElementById('countdown');
     
-    if (!countdownElement) return;
+    if (!countdownElement) {
+        console.log('Countdown element not found');
+        return;
+    }
+    
+    console.log('Initializing countdown timer...');
     
     // Set the date for next Cinco de Mayo (May 5, 2025)
-    const cincoDate = new Date('May 5, 2025 00:00:00').getTime();
+    const cincoDate = new Date(2025, 4, 5, 0, 0, 0).getTime(); // Note: Month is 0-indexed, so 4 = May
+    console.log('Target date (Cinco de Mayo 2025):', new Date(cincoDate).toString());
+    
+    // Get current date for debugging
+    const now = new Date().getTime();
+    console.log('Current date:', new Date(now).toString());
+    console.log('Time difference (ms):', cincoDate - now);
     
     // Update the countdown every second
     const countdownTimer = setInterval(function() {
@@ -40,13 +51,29 @@ function initCountdown() {
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
         
         // Display the result
-        document.getElementById('days').innerHTML = days.toString().padStart(2, '0');
-        document.getElementById('hours').innerHTML = hours.toString().padStart(2, '0');
-        document.getElementById('minutes').innerHTML = minutes.toString().padStart(2, '0');
-        document.getElementById('seconds').innerHTML = seconds.toString().padStart(2, '0');
+        const daysElement = document.getElementById('days');
+        const hoursElement = document.getElementById('hours');
+        const minutesElement = document.getElementById('minutes');
+        const secondsElement = document.getElementById('seconds');
+        
+        if (daysElement && hoursElement && minutesElement && secondsElement) {
+            daysElement.innerHTML = days.toString().padStart(2, '0');
+            hoursElement.innerHTML = hours.toString().padStart(2, '0');
+            minutesElement.innerHTML = minutes.toString().padStart(2, '0');
+            secondsElement.innerHTML = seconds.toString().padStart(2, '0');
+            
+            // Log values occasionally for debugging
+            if (seconds % 10 === 0) {
+                console.log(`Countdown: ${days}d ${hours}h ${minutes}m ${seconds}s`);
+            }
+        } else {
+            console.error('One or more countdown elements not found');
+            clearInterval(countdownTimer);
+        }
         
         // If the countdown is finished, display message
         if (distance < 0) {
+            console.log('Countdown finished!');
             clearInterval(countdownTimer);
             countdownElement.innerHTML = "<h3>¡Feliz Cinco de Mayo!</h3>";
         }
